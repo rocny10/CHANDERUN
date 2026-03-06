@@ -1,5 +1,5 @@
 # ============================================
-# systems.py
+# systems.py - COMPLETO
 # ============================================
 import pygame
 from config import *
@@ -17,9 +17,9 @@ class SistemaRefrescos:
             return True
         return False
     def dibujar(self, pantalla, x, y):
-        fuente = pygame.font.Font(None, 30)
+        fuente = pygame.font.Font(None,30)
         texto = fuente.render(f"🥤 {self.refrescos}", True, DORADO)
-        pantalla.blit(texto, (x, y))
+        pantalla.blit(texto, (x,y))
 
 class SistemaLogros:
     def __init__(self):
@@ -53,8 +53,8 @@ class SistemaLogros:
                 self.notificaciones.remove(n)
 
 class Tienda:
-    def __init__(self, sis_refrescos):
-        self.sis_ref = sis_refrescos
+    def __init__(self, sistema_refrescos):
+        self.sis_ref = sistema_refrescos
         self.powerups = []
     def comprar(self, nombre):
         precio = PRECIO_POWERUPS.get(nombre,0)

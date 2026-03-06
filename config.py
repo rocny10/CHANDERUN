@@ -1,14 +1,12 @@
 # ============================================
-# CONFIG.PY - CONFIGURACIÓN PRINCIPAL
+# config.py - CONFIGURACIÓN AJUSTADA
 # ============================================
-
 import pygame
 
-# Pantalla
 ANCHO = 1920
 ALTO = 1080
 FPS = 60
-SUELO_Y = 920          # Ajustado para que los sprites de 64px apoyen bien
+SUELO_Y = 920
 TITULO = "Chande-Run"
 
 # Colores
@@ -28,21 +26,29 @@ GRIS_OSCURO = (64,64,64)
 DORADO = (255,215,0)
 PLATA = (192,192,192)
 
-# Física (ajustada para sprites de 64px)
+# Física
 GRAVEDAD = 0.6
-VEL_SALTO_MIN = -12
+VEL_SALTO_BASE = -12
 VEL_SALTO_MAX = -22
-VELOCIDAD_BASE = 6
-VEL_MAX = 20
+VELOCIDAD_BASE = 5
+VEL_MAX = 15
 
-# Tamaños de sprites (todos 64x64)
-SPRITE_SIZE = 64
+# Tamaño sprites
+SPRITE_SIZE = 96
+
+# Fuente
+FUENTE_TTF = "assets/font.ttf"
 
 # Economía
 REFRESCO_VALOR_BASE = 1
 PRECIO_POWERUPS = {'segundo_intento': 50}
 
-# Logros (solo recompensa en refrescos)
+# Probabilidades de spawn (REDUCIDAS)
+PROB_SIERRA = 0.005
+PROB_CAJA = 0.006
+PROB_REFRESCO = 0.004
+
+# Logros
 LOGROS = {
     'primer_paso': {'nombre': 'Primer Paso', 'desc': 'Juega tu primera partida', 'refrescos': 10},
     'maratonista': {'nombre': 'Maratonista', 'desc': 'Corre 2000 puntos', 'refrescos': 50},
