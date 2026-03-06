@@ -1,0 +1,5 @@
+convertir el juego a unreal engine 5 
+hacer una banda de sonoraa con instrumentos de viento 
+conseguir un contrato con un algun publisher internacional 
+aplicar raytracing-pathtracing  a la iluminacion global 
+inplementacion de nvida DLSS o AMD FRS 3.0 
