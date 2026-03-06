@@ -1,4 +1,4 @@
-![Descripción]()
+![Descripción](https://github.com/rocny10/CHANDERUN/blob/main/assets/start.jpg)
 
 ---
 
