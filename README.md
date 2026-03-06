@@ -1,4 +1,5 @@
-![Descripción](https://github.com/TU-USUARIO/Chande-Run/blob/main/assets/tu-fondo.jpg?raw=true)
+![Descripción]()
+
 ---
 
 ## 🎮 **Control Scheme**
