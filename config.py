@@ -4,49 +4,45 @@
 
 import pygame
 
-# Configuración de pantalla
+# Pantalla
 ANCHO = 1920
 ALTO = 1080
 FPS = 60
-SUELO_Y = 850
-TITULO = "Chande-Run"  # <-- CAMBIADO
+SUELO_Y = 920          # Ajustado para que los sprites de 64px apoyen bien
+TITULO = "Chande-Run"
 
 # Colores
-BLANCO = (255, 255, 255)
-NEGRO = (0, 0, 0)
-ROJO = (255, 50, 50)
-VERDE = (50, 255, 50)
-AZUL = (50, 50, 255)
-AMARILLO = (255, 255, 50)
-MORADO = (150, 50, 255)
-NARANJA = (255, 150, 50)
-CELESTE = (50, 200, 255)
-ROSA = (255, 100, 200)
-MARRON = (139, 69, 19)
-GRIS = (128, 128, 128)
-GRIS_OSCURO = (64, 64, 64)
-DORADO = (255, 215, 0)
-PLATA = (192, 192, 192)
+BLANCO = (255,255,255)
+NEGRO = (0,0,0)
+ROJO = (255,50,50)
+VERDE = (50,255,50)
+AZUL = (50,50,255)
+AMARILLO = (255,255,50)
+MORADO = (150,50,255)
+NARANJA = (255,150,50)
+CELESTE = (50,200,255)
+ROSA = (255,100,200)
+MARRON = (139,69,19)
+GRIS = (128,128,128)
+GRIS_OSCURO = (64,64,64)
+DORADO = (255,215,0)
+PLATA = (192,192,192)
 
-# Física
-GRAVEDAD = 0.8
-VEL_SALTO = -18
-VELOCIDAD_BASE = 8
-VEL_MAX = 25
+# Física (ajustada para sprites de 64px)
+GRAVEDAD = 0.6
+VEL_SALTO_MIN = -12
+VEL_SALTO_MAX = -22
+VELOCIDAD_BASE = 6
+VEL_MAX = 20
 
-# Escala de objetos (para sprites futuros)
-JUGADOR_ESCALA = 2.5
-OBSTACULO_ESCALA = 2.0
-REFRESCO_ESCALA = 2.0
+# Tamaños de sprites (todos 64x64)
+SPRITE_SIZE = 64
 
-# Economía (refrescos)
+# Economía
 REFRESCO_VALOR_BASE = 1
-PRECIO_POWERUPS = {
-    'segundo_intento': 50,   # Precio en refrescos
-    # Aquí puedes agregar más power-ups después
-}
+PRECIO_POWERUPS = {'segundo_intento': 50}
 
-# Logros (sin XP, solo recompensa en refrescos)
+# Logros (solo recompensa en refrescos)
 LOGROS = {
     'primer_paso': {'nombre': 'Primer Paso', 'desc': 'Juega tu primera partida', 'refrescos': 10},
     'maratonista': {'nombre': 'Maratonista', 'desc': 'Corre 2000 puntos', 'refrescos': 50},

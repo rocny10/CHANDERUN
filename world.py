@@ -1,20 +1,12 @@
-# ============================================
-# world.py - Completo y funcional
-# ============================================
+# world.py (versión estable)
 import pygame
 import random
 import math
 import os
 from config import *
 
-# -------------------------------------------------------------------
-# Fondo personalizado con imagen (con detección de errores)
-# -------------------------------------------------------------------
 class FondoPersonalizado:
     def __init__(self, archivo="assets/fondo.jpg"):
-        """
-        archivo: ruta a la imagen de fondo (por defecto assets/fondo.jpg)
-        """
         self.archivo = archivo
         self.imagen = None
         self.ancho = ANCHO
@@ -22,63 +14,53 @@ class FondoPersonalizado:
         self.cargar()
 
     def cargar(self):
-        """Intenta cargar la imagen; si falla, usa un fondo de color sólido."""
         if not os.path.exists(self.archivo):
-            print(f"⚠️ No se encuentra el archivo: {self.archivo}")
-            print(f"   Buscando en: {os.path.abspath(self.archivo)}")
+            print(f"Fondo no encontrado: {self.archivo}, usando azul")
             self.usar_fondo_azul()
             return
-
         try:
-            # Cargar la imagen
-            img_original = pygame.image.load(self.archivo)
-            # Convertir según el tipo (con o sin canal alfa)
+            img = pygame.image.load(self.archivo)
             if self.archivo.lower().endswith('.png'):
-                img_original = img_original.convert_alpha()
+                img = img.convert_alpha()
             else:
-                img_original = img_original.convert()
-            # Escalar al tamaño de la pantalla
-            self.imagen = pygame.transform.scale(img_original, (self.ancho, self.alto))
-            print(f"✅ Fondo cargado correctamente: {self.archivo}")
+                img = img.convert()
+            self.imagen = pygame.transform.scale(img, (self.ancho, self.alto))
+            print("Fondo cargado")
         except Exception as e:
-            print(f"❌ Error al cargar la imagen {self.archivo}: {e}")
+            print(f"Error fondo: {e}, usando azul")
             self.usar_fondo_azul()
 
     def usar_fondo_azul(self):
-        """Crea un fondo de color azul como respaldo."""
         self.imagen = pygame.Surface((self.ancho, self.alto))
-        self.imagen.fill((135, 206, 235))  # Azul cielo
-        print("⚠️ Usando fondo azul de emergencia")
+        self.imagen.fill((135,206,235))
 
     def update(self, velocidad):
-        # Por ahora sin desplazamiento, pero se puede añadir después
         pass
 
     def dibujar(self, pantalla):
-        """Dibuja el fondo en la pantalla."""
-        pantalla.blit(self.imagen, (0, 0))
+        pantalla.blit(self.imagen, (0,0))
 
 # -------------------------------------------------------------------
-# Refresco (moneda) – intenta cargar un sprite; si no, usa placeholder
+# Refresco
 # -------------------------------------------------------------------
-# Intentamos cargar la imagen del refresco una sola vez (para todos los objetos)
 REFRESCO_IMG = None
 try:
-    img_temp = pygame.image.load("assets/refresco.png").convert_alpha()
-    REFRESCO_IMG = pygame.transform.scale(img_temp, (30, 30))
-    print("✅ Sprite de refresco cargado")
+    tmp = pygame.image.load("assets/refresco.png").convert_alpha()
+    REFRESCO_IMG = pygame.transform.scale(tmp, (SPRITE_SIZE, SPRITE_SIZE))
+    print("Sprite refresco cargado")
 except:
-    print("⚠️ No se encontró assets/refresco.png, se usará placeholder")
+    print("No se encontró assets/refresco.png, usando placeholder")
+    REFRESCO_IMG = None
 
 class Refresco:
-    def __init__(self, x, y):
+    def __init__(self, x, y_suelo):
         self.x = x
-        self.y = y
-        self.ancho = 30
-        self.alto = 30
+        self.y_suelo = y_suelo
+        self.ancho = SPRITE_SIZE
+        self.alto = SPRITE_SIZE
         self.recogido = False
         self.valor = REFRESCO_VALOR_BASE
-        self.imagen = REFRESCO_IMG  # Puede ser None
+        self.imagen = REFRESCO_IMG
 
     def update(self, velocidad):
         self.x -= velocidad
@@ -86,63 +68,65 @@ class Refresco:
     def dibujar(self, pantalla):
         if self.recogido or self.x < -self.ancho:
             return
+        y_dibujo = self.y_suelo - self.alto
         if self.imagen:
-            # Dibujar el sprite
-            pantalla.blit(self.imagen, (self.x, self.y - 15))
+            pantalla.blit(self.imagen, (self.x, y_dibujo))
         else:
-            # Placeholder: rectángulo rojo con texto "LATA"
-            pygame.draw.rect(pantalla, ROJO, (self.x, self.y - 15, self.ancho, self.alto))
-            pygame.draw.rect(pantalla, BLANCO, (self.x + 5, self.y - 10, 20, 20), 2)
-            fuente = pygame.font.Font(None, 15)
-            texto = fuente.render("LATA", True, BLANCO)
-            pantalla.blit(texto, (self.x + 2, self.y - 10))
+            pygame.draw.rect(pantalla, ROJO, (self.x, y_dibujo, self.ancho, self.alto))
+            pygame.draw.rect(pantalla, BLANCO, (self.x+5, y_dibujo+10, 20,20),2)
+            f = pygame.font.Font(None,15)
+            t = f.render("LATA", True, BLANCO)
+            pantalla.blit(t, (self.x+10, y_dibujo+20))
 
     def get_rect(self):
-        return pygame.Rect(self.x, self.y - 15, self.ancho, self.alto)
+        return pygame.Rect(self.x, self.y_suelo - self.alto, self.ancho, self.alto)
 
 # -------------------------------------------------------------------
-# Sierra (enemigo que mata)
+# Sierra
 # -------------------------------------------------------------------
 class Sierra:
-    def __init__(self, x):
+    def __init__(self, x, y_suelo):
         self.x = x
-        self.y = SUELO_Y + 20 - 50
-        self.ancho = 50
-        self.alto = 50
+        self.y_suelo = y_suelo
+        self.ancho = SPRITE_SIZE
+        self.alto = SPRITE_SIZE
 
     def update(self, velocidad):
         self.x -= velocidad
 
     def dibujar(self, pantalla):
-        # Cuerpo gris
-        pygame.draw.circle(pantalla, GRIS, (int(self.x + 25), int(self.y + 25)), 25)
-        # Dientes (ocho círculos pequeños alrededor)
+        # El rectángulo de dibujo: desde (self.x, self.y_suelo - self.alto) hasta (self.x + self.ancho, self.y_suelo)
+        y_dibujo = self.y_suelo - self.alto
+        centro_x = self.x + self.ancho // 2
+        centro_y = y_dibujo + self.alto // 2
+        radio = self.ancho // 2 - 4
+        pygame.draw.circle(pantalla, GRIS, (centro_x, centro_y), radio)
         for i in range(8):
             ang = i * math.pi / 4
-            dx = self.x + 25 + math.cos(ang) * 30
-            dy = self.y + 25 + math.sin(ang) * 30
+            dx = centro_x + math.cos(ang) * (radio + 6)
+            dy = centro_y + math.sin(ang) * (radio + 6)
             pygame.draw.circle(pantalla, GRIS_OSCURO, (int(dx), int(dy)), 5)
 
     def get_rect(self):
-        return pygame.Rect(self.x, self.y, self.ancho, self.alto)
+        return pygame.Rect(self.x, self.y_suelo - self.alto, self.ancho, self.alto)
 
 # -------------------------------------------------------------------
-# Caja (obstáculo que no mata si pasas por encima)
+# Caja
 # -------------------------------------------------------------------
 class Caja:
-    def __init__(self, x):
+    def __init__(self, x, y_suelo):
         self.x = x
-        self.y = SUELO_Y + 20 - 60
-        self.ancho = 60
-        self.alto = 60
+        self.y_suelo = y_suelo
+        self.ancho = SPRITE_SIZE
+        self.alto = SPRITE_SIZE
 
     def update(self, velocidad):
         self.x -= velocidad
 
     def dibujar(self, pantalla):
-        pygame.draw.rect(pantalla, MARRON, (self.x, self.y, self.ancho, self.alto))
-        pygame.draw.rect(pantalla, NEGRO, (self.x, self.y, self.ancho, self.alto), 3)
+        y_dibujo = self.y_suelo - self.alto
+        pygame.draw.rect(pantalla, MARRON, (self.x, y_dibujo, self.ancho, self.alto))
+        pygame.draw.rect(pantalla, NEGRO, (self.x, y_dibujo, self.ancho, self.alto), 3)
 
     def get_rect(self):
-        return pygame.Rect(self.x, self.y, self.ancho, self.alto)
-    
+        return pygame.Rect(self.x, self.y_suelo - self.alto, self.ancho, self.alto)
