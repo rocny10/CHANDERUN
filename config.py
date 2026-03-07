@@ -1,5 +1,5 @@
 # ============================================
-# config.py - CONFIGURACIÓN AJUSTADA
+# config.py
 # ============================================
 import pygame
 
@@ -43,10 +43,10 @@ FUENTE_TTF = "assets/font.ttf"
 REFRESCO_VALOR_BASE = 1
 PRECIO_POWERUPS = {'segundo_intento': 50}
 
-# Probabilidades de spawn (REDUCIDAS)
-PROB_SIERRA = 0.005
-PROB_CAJA = 0.006
-PROB_REFRESCO = 0.004
+# Probabilidades de spawn (más bajas)
+PROB_SIERRA = 0.004
+PROB_CAJA = 0.005
+PROB_REFRESCO = 0.003
 
 # Logros
 LOGROS = {

@@ -1,5 +1,5 @@
 # ============================================
-# world.py - COMPLETO
+# world.py - CON SPRITE PARA CAJA
 # ============================================
 import pygame
 import math
@@ -48,6 +48,7 @@ class Refresco:
         try:
             tmp = pygame.image.load("assets/refresco.png").convert_alpha()
             self.imagen = pygame.transform.scale(tmp, (SPRITE_SIZE, SPRITE_SIZE))
+            print("✅ Sprite refresco cargado")
         except:
             pass
     def update(self, velocidad):
@@ -73,19 +74,29 @@ class Sierra:
         self.y_suelo = y_suelo
         self.ancho = SPRITE_SIZE
         self.alto = SPRITE_SIZE
+        self.imagen = None
+        try:
+            tmp = pygame.image.load("assets/sierra.png").convert_alpha()
+            self.imagen = pygame.transform.scale(tmp, (SPRITE_SIZE, SPRITE_SIZE))
+            print("✅ Sprite sierra cargado")
+        except:
+            pass
     def update(self, velocidad):
         self.x -= velocidad
     def dibujar(self, pantalla):
         y = self.y_suelo - self.alto
-        cx = self.x + self.ancho//2
-        cy = y + self.alto//2
-        radio = self.ancho//2 - 4
-        pygame.draw.circle(pantalla, GRIS, (cx, cy), radio)
-        for i in range(8):
-            ang = i * math.pi/4
-            dx = cx + math.cos(ang) * (radio+6)
-            dy = cy + math.sin(ang) * (radio+6)
-            pygame.draw.circle(pantalla, GRIS_OSCURO, (int(dx), int(dy)), 5)
+        if self.imagen:
+            pantalla.blit(self.imagen, (self.x, y))
+        else:
+            cx = self.x + self.ancho//2
+            cy = y + self.alto//2
+            radio = self.ancho//2 - 4
+            pygame.draw.circle(pantalla, GRIS, (cx, cy), radio)
+            for i in range(8):
+                ang = i * math.pi/4
+                dx = cx + math.cos(ang) * (radio+6)
+                dy = cy + math.sin(ang) * (radio+6)
+                pygame.draw.circle(pantalla, GRIS_OSCURO, (int(dx), int(dy)), 5)
     def get_rect(self):
         return pygame.Rect(self.x, self.y_suelo - self.alto, self.ancho, self.alto)
 
@@ -95,11 +106,21 @@ class Caja:
         self.y_suelo = y_suelo
         self.ancho = SPRITE_SIZE
         self.alto = SPRITE_SIZE
+        self.imagen = None
+        try:
+            tmp = pygame.image.load("assets/caja.png").convert_alpha()
+            self.imagen = pygame.transform.scale(tmp, (SPRITE_SIZE, SPRITE_SIZE))
+            print("✅ Sprite caja cargado")
+        except:
+            pass
     def update(self, velocidad):
         self.x -= velocidad
     def dibujar(self, pantalla):
         y = self.y_suelo - self.alto
-        pygame.draw.rect(pantalla, MARRON, (self.x, y, self.ancho, self.alto))
-        pygame.draw.rect(pantalla, NEGRO, (self.x, y, self.ancho, self.alto), 3)
+        if self.imagen:
+            pantalla.blit(self.imagen, (self.x, y))
+        else:
+            pygame.draw.rect(pantalla, MARRON, (self.x, y, self.ancho, self.alto))
+            pygame.draw.rect(pantalla, NEGRO, (self.x, y, self.ancho, self.alto), 3)
     def get_rect(self):
         return pygame.Rect(self.x, self.y_suelo - self.alto, self.ancho, self.alto)

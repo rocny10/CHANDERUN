@@ -1,5 +1,5 @@
 # ============================================
-# main.py - COMPLETO
+# main.py
 # ============================================
 import pygame
 import sys
@@ -171,11 +171,14 @@ class Juego:
         self.stickman.update()
         self.puntuacion += 1
 
-        if self.stickman.en_suelo and not self.stickman.agachado:
-            self.stickman.set_animacion("run")
+        # CAMBIO DE ANIMACIÓN
+        if not self.stickman.en_suelo:
+            self.stickman.set_animacion("jump")
         else:
+            # En el suelo, si existe run se puede usar, pero por ahora idle
             self.stickman.set_animacion("idle")
 
+        # Generar sierras
         if random.random() < PROB_SIERRA and self.contadores['sierra'] > 40:
             nueva = Sierra(ANCHO, SUELO_Y)
             if self.posicion_valida(nueva.get_rect(), [self.sierras, self.cajas]):
@@ -184,6 +187,7 @@ class Juego:
         else:
             self.contadores['sierra'] += 1
 
+        # Generar cajas
         if random.random() < PROB_CAJA and self.contadores['caja'] > 30:
             nueva = Caja(ANCHO, SUELO_Y)
             if self.posicion_valida(nueva.get_rect(), [self.sierras, self.cajas]):
@@ -192,6 +196,7 @@ class Juego:
         else:
             self.contadores['caja'] += 1
 
+        # Generar refrescos
         if random.random() < PROB_REFRESCO and self.contadores['refresco'] > 20:
             nuevo = Refresco(ANCHO, SUELO_Y)
             if self.posicion_valida(nuevo.get_rect(), [self.sierras, self.cajas, self.refrescos_lista]):
@@ -200,20 +205,24 @@ class Juego:
         else:
             self.contadores['refresco'] += 1
 
+        # Mover y limpiar
         for lista in [self.sierras, self.cajas, self.refrescos_lista]:
             for obj in lista[:]:
                 obj.update(self.velocidad)
                 if obj.x < -200:
                     lista.remove(obj)
 
+        # Colisiones
         rect_jug = self.stickman.get_rect()
 
+        # Refrescos
         for r in self.refrescos_lista[:]:
             if rect_jug.colliderect(r.get_rect()):
                 self.refrescos_sys.añadir(r.valor)
                 self.refrescos_lista.remove(r)
                 self.logros.actualizar('coleccionista', self.refrescos_sys.refrescos_totales)
 
+        # Sierras
         for s in self.sierras[:]:
             if rect_jug.colliderect(s.get_rect()):
                 if self.stickman.tiene_powerup('segundo_intento'):
@@ -224,6 +233,7 @@ class Juego:
                     self.estado = "GAME_OVER"
                 break
 
+        # Cajas
         for c in self.cajas[:]:
             if rect_jug.colliderect(c.get_rect()):
                 if self.stickman.vel_y >= 0 and rect_jug.bottom <= c.get_rect().top + 20:
@@ -239,6 +249,7 @@ class Juego:
                         self.estado = "GAME_OVER"
                     break
 
+        # Logros
         if self.puntuacion >= 2000:
             self.logros.actualizar('maratonista')
         if self.velocidad >= 20:
@@ -246,6 +257,7 @@ class Juego:
         if self.stickman.saltos_totales >= 150:
             self.logros.actualizar('saltarin')
 
+        # Aumentar velocidad
         if self.puntuacion % 500 == 0 and self.velocidad < VEL_MAX:
             self.velocidad += 0.5
 

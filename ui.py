@@ -1,5 +1,5 @@
 # ============================================
-# ui.py - COMPLETO
+# ui.py - VERSIÓN FINAL
 # ============================================
 import pygame
 import os
@@ -27,20 +27,6 @@ class UI:
         except:
             print("⚠️ No se encontró assets/logo.png, usando texto")
 
-        self.boton_sprite = None
-        try:
-            img = pygame.image.load("assets/boton.png").convert_alpha()
-            self.boton_sprite = pygame.transform.scale(img, (280, 70))
-        except:
-            pass
-
-        self.boton_salir_sprite = None
-        try:
-            img = pygame.image.load("assets/boton_salir.png").convert_alpha()
-            self.boton_salir_sprite = pygame.transform.scale(img, (280, 70))
-        except:
-            pass
-
     def desenfocar(self, pantalla, factor=6):
         tamaño_peq = (ANCHO // factor, ALTO // factor)
         superficie_peq = pygame.transform.smoothscale(pantalla, tamaño_peq)
@@ -48,15 +34,10 @@ class UI:
         return superficie_grande
 
     def dibujar_boton(self, pantalla, texto, rect, es_salir=False):
-        sprite = self.boton_salir_sprite if es_salir else self.boton_sprite
-        if sprite:
-            sprite_escalado = pygame.transform.scale(sprite, (rect.width, rect.height))
-            pantalla.blit(sprite_escalado, rect.topleft)
-        else:
-            color = (150,50,50) if es_salir else (60,60,80)
-            borde = (255,100,100) if es_salir else (180,180,220)
-            pygame.draw.rect(pantalla, color, rect, border_radius=15)
-            pygame.draw.rect(pantalla, borde, rect, 4, border_radius=15)
+        color = (150,50,50) if es_salir else (60,60,80)
+        borde = (255,100,100) if es_salir else (180,180,220)
+        pygame.draw.rect(pantalla, color, rect, border_radius=15)
+        pygame.draw.rect(pantalla, borde, rect, 4, border_radius=15)
 
         sup = self.fuente_pequena.render(texto, True, BLANCO)
         x = rect.centerx - sup.get_width()//2
@@ -75,6 +56,7 @@ class UI:
         overlay.fill((0, 0, 20, 180))
         pantalla.blit(overlay, (0,0))
 
+        # LOGO A LA IZQUIERDA
         if self.logo:
             x_logo = 100
             y_logo = 80
@@ -83,14 +65,17 @@ class UI:
             titulo = self.fuente_grande.render("Chande-Run", True, DORADO)
             pantalla.blit(titulo, (100, 100))
 
+        # Mostrar refrescos arriba derecha
         texto_refrescos = self.fuente_mediana.render(f"🥤 {refrescos}", True, DORADO)
         pantalla.blit(texto_refrescos, (ANCHO - 150, 50))
 
+        # PERSONAJE EN IDLE
         stickman.x = 500
         stickman.y = SUELO_Y
         stickman.set_animacion("idle")
         stickman.dibujar(pantalla)
 
+        # BOTONES A LA DERECHA
         boton_ancho = 300
         boton_alto = 70
         espacio = 25
@@ -171,4 +156,3 @@ class UI:
 
         r = self.fuente_pequena.render("R - Reintentar   ESC - Menú", True, BLANCO)
         pantalla.blit(r, (ANCHO//2 - r.get_width()//2, 400))
-    

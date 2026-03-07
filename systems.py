@@ -1,5 +1,5 @@
 # ============================================
-# systems.py - COMPLETO
+# systems.py
 # ============================================
 import pygame
 from config import *

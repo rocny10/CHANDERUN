@@ -1,5 +1,5 @@
 # ============================================
-# player.py - COMPLETO
+# player.py - VERSIÓN DEFINITIVA
 # ============================================
 import pygame
 import os
@@ -19,80 +19,48 @@ class Stickman:
 
         self.cargando_salto = False
         self.tiempo_carga = 0
-
-        self.animaciones = {}
         self.animacion_actual = "idle"
-        self.frame_actual = 0
-        self.tiempo_animacion = 0
-        self.ultimo_tiempo = pygame.time.get_ticks()
-        self.velocidad_animacion = 150
-        
-        self.cargar_animaciones()
 
-    def cargar_animaciones(self):
-        try:
-            sheet = pygame.image.load("assets/idle_sheet.png").convert_alpha()
-            frame_width = 56
-            frame_height = 56
-            frames_idle = []
-            frames_por_fila = 5
-            total_frames = 8
-            
-            for i in range(total_frames):
-                fila = i // frames_por_fila
-                columna = i % frames_por_fila
-                x = columna * frame_width
-                y = fila * frame_height
-                frame = sheet.subsurface((x, y, frame_width, frame_height))
-                frame = pygame.transform.scale(frame, (SPRITE_SIZE, SPRITE_SIZE))
-                frames_idle.append(frame)
-            
-            self.animaciones["idle"] = frames_idle
-            print(f"✅ Idle spritesheet cargado: {len(frames_idle)} frames")
-        except:
-            frames_idle = []
-            for i in range(4):
-                surf = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE), pygame.SRCALPHA)
-                color = (200 + i*10, 50, 50)
-                pygame.draw.rect(surf, color, (5, 5, SPRITE_SIZE-10, SPRITE_SIZE-10), border_radius=10)
-                pygame.draw.rect(surf, BLANCO, (5, 5, SPRITE_SIZE-10, SPRITE_SIZE-10), 3)
-                frames_idle.append(surf)
-            self.animaciones["idle"] = frames_idle
+        # Sprites
+        self.sprites = {}
+        self.cargar_sprites()
+        self.sprite_actual = self.sprites.get("idle", self._crear_fallback())
 
-        try:
-            sheet = pygame.image.load("assets/run_sheet.png").convert_alpha()
-            frame_width = 56
-            frame_height = 56
-            frames_run = []
-            frames_por_fila = 5
-            total_frames = 8
-            
-            for i in range(total_frames):
-                fila = i // frames_por_fila
-                columna = i % frames_por_fila
-                x = columna * frame_width
-                y = fila * frame_height
-                frame = sheet.subsurface((x, y, frame_width, frame_height))
-                frame = pygame.transform.scale(frame, (SPRITE_SIZE, SPRITE_SIZE))
-                frames_run.append(frame)
-            
-            self.animaciones["run"] = frames_run
-            print(f"✅ Run spritesheet cargado: {len(frames_run)} frames")
-        except:
-            frames_run = []
-            for i in range(4):
-                surf = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE), pygame.SRCALPHA)
-                offset = i * 5
-                color = (50, 100 + i*30, 200)
-                pygame.draw.rect(surf, color, (5 + offset, 5, SPRITE_SIZE-20, SPRITE_SIZE-10), border_radius=5)
-                pygame.draw.rect(surf, BLANCO, (5 + offset, 5, SPRITE_SIZE-20, SPRITE_SIZE-10), 2)
-                frames_run.append(surf)
-            self.animaciones["run"] = frames_run
+    def _crear_fallback(self):
+        surf = pygame.Surface((SPRITE_SIZE, SPRITE_SIZE))
+        surf.fill(ROJO)
+        return surf
 
-    def set_animacion(self, nombre):
-        if nombre in self.animaciones and nombre != self.animacion_actual:
-            self.animacion_actual = nombre
-            self.frame_actual = 0
+    def cargar_sprites(self):
+        """Carga los sprites desde archivos individuales o spritesheets"""
+        # Intenta cargar cada animación
+        animaciones = ["idle", "run", "jump"]
+        for anim in animaciones:
+            sprite = None
+            # Buscar archivo: assets/anim.png o assets/anim_sheet.png
+            rutas = [f"assets/{anim}.png", f"assets/{anim}_sheet.png"]
+            for ruta in rutas:
+                if os.path.exists(ruta):
+                    try:
+                        img = pygame.image.load(ruta).convert_alpha()
+                        # Si es spritesheet, tomar el primer frame
+                        if img.get_width() > 64:
+                            # Asumimos primer frame de 56x56
+                            img = img.subsurface((0, 0, 56, 56))
+                        sprite = pygame.transform.scale(img, (SPRITE_SIZE, SPRITE_SIZE))
+                        print(f"✅ {anim} cargado desde {ruta}")
+                        break
+                    except Exception as e:
+                        print(f"❌ Error cargando {ruta}: {e}")
+            if sprite is None:
+                print(f"⚠️ {anim} no encontrado, usando fallback")
+                sprite = self._crear_fallback()
+            self.sprites[anim] = sprite
+
+    def set_animacion(self, anim):
+        if anim in self.sprites and anim != self.animacion_actual:
+            self.animacion_actual = anim
+            self.sprite_actual = self.sprites[anim]
 
     def aplicar_powerup(self, nombre):
         self.powerups.append(nombre)
@@ -122,6 +90,7 @@ class Stickman:
             self.en_suelo = False
             self.cargando_salto = False
             self.saltos_totales += 1
+            self.set_animacion("jump")
 
     def agachar(self, activar):
         self.agachado = activar
@@ -142,21 +111,15 @@ class Stickman:
             self.y = SUELO_Y
             self.vel_y = 0
             self.en_suelo = True
+            if self.animacion_actual == "jump":
+                self.set_animacion("idle")  # o "run" si estás corriendo
         else:
             self.en_suelo = False
 
         self.distancia += 1
 
-        ahora = pygame.time.get_ticks()
-        if ahora - self.ultimo_tiempo > self.velocidad_animacion:
-            self.ultimo_tiempo = ahora
-            frames = self.animaciones[self.animacion_actual]
-            self.frame_actual = (self.frame_actual + 1) % len(frames)
-
     def dibujar(self, pantalla):
-        frames = self.animaciones[self.animacion_actual]
-        frame = frames[self.frame_actual]
-        pantalla.blit(frame, (self.x - SPRITE_SIZE//2, self.y - SPRITE_SIZE))
+        pantalla.blit(self.sprite_actual, (self.x - SPRITE_SIZE//2, self.y - SPRITE_SIZE))
 
     def get_rect(self):
         return pygame.Rect(self.x - SPRITE_SIZE//2, self.y - SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE)
