@@ -1,5 +1,5 @@
 # ============================================
-# world.py - CON SPRITE PARA CAJA
+# world.py - SIN CAMBIOS (se incluye por completitud)
 # ============================================
 import pygame
 import math

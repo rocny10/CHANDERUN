@@ -33,8 +33,8 @@ VEL_SALTO_MAX = -22
 VELOCIDAD_BASE = 5
 VEL_MAX = 15
 
-# Tamaño sprites
-SPRITE_SIZE = 96
+# Tamaño sprites (más grande para el menú)
+SPRITE_SIZE = 500
 
 # Fuente
 FUENTE_TTF = "assets/font.ttf"

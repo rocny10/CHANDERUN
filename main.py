@@ -1,5 +1,5 @@
 # ============================================
-# main.py
+# main.py - VERSIÓN CORREGIDA CON MÉTODO EJECUTAR
 # ============================================
 import pygame
 import sys
@@ -162,6 +162,8 @@ class Juego:
             self.tiempo_menu += 1
             if self.tiempo_menu > 60:
                 self.tiempo_menu = 0
+            # Actualizar animación del stickman en menú
+            self.stickman.actualizar_animacion()
             return
 
         if self.estado != "JUGANDO":
@@ -171,11 +173,10 @@ class Juego:
         self.stickman.update()
         self.puntuacion += 1
 
-        # CAMBIO DE ANIMACIÓN
+        # Cambio de animación según estado
         if not self.stickman.en_suelo:
             self.stickman.set_animacion("jump")
         else:
-            # En el suelo, si existe run se puede usar, pero por ahora idle
             self.stickman.set_animacion("idle")
 
         # Generar sierras
@@ -307,3 +308,4 @@ class Juego:
 if __name__ == "__main__":
     juego = Juego()
     juego.ejecutar()
+    

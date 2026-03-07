@@ -1,5 +1,5 @@
 # ============================================
-# ui.py - VERSIÓN FINAL
+# ui.py (sin cambios, solo asegurar que dibuja el stickman)
 # ============================================
 import pygame
 import os
@@ -47,11 +47,11 @@ class UI:
     def menu(self, pantalla, refrescos, stickman):
         x_original = stickman.x
         y_original = stickman.y
-        
+
         fondo_actual = pantalla.copy()
         fondo_desenfocado = self.desenfocar(fondo_actual)
         pantalla.blit(fondo_desenfocado, (0,0))
-        
+
         overlay = pygame.Surface((ANCHO, ALTO), pygame.SRCALPHA)
         overlay.fill((0, 0, 20, 180))
         pantalla.blit(overlay, (0,0))
@@ -69,7 +69,7 @@ class UI:
         texto_refrescos = self.fuente_mediana.render(f"🥤 {refrescos}", True, DORADO)
         pantalla.blit(texto_refrescos, (ANCHO - 150, 50))
 
-        # PERSONAJE EN IDLE
+        # PERSONAJE EN IDLE (animado)
         stickman.x = 500
         stickman.y = SUELO_Y
         stickman.set_animacion("idle")
