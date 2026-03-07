@@ -6,7 +6,7 @@ import pygame
 ANCHO = 1920
 ALTO = 1080
 FPS = 60
-SUELO_Y = 920
+SUELO_Y = 1100
 TITULO = "Chande-Run"
 
 # Colores
