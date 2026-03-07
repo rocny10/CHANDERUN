@@ -101,6 +101,40 @@ class Sierra:
         return pygame.Rect(self.x, self.y_suelo - self.alto, self.ancho, self.alto)
 
 class Caja:
+    def init(self, x, y_suelo):
+        self.x = x
+        self.y_suelo = y_suelo
+        self.ancho = SPRITE_SIZE
+        self.alto = SPRITE_SIZE
+        self.imagen = None
+        # Intentar cargar sprite de caja
+        try:
+            if os.path.exists("assets/caja.png"):
+                tmp = pygame.image.load("assets/caja.png").convert_alpha()
+                self.imagen = pygame.transform.scale(tmp, (SPRITE_SIZE, SPRITE_SIZE))
+                print(" Sprite caja cargado")
+            else:
+                print(" assets/caja.png no encontrado, usando fallback")
+        except Exception as e:
+            print(f" Error cargando caja.png: {e}")
+
+    def update(self, velocidad):
+        self.x -= velocidad
+
+    def dibujar(self, pantalla):
+        y = self.y_suelo - self.alto
+        if self.imagen:
+            pantalla.blit(self.imagen, (self.x, y))
+        else:
+            # Fallback: rectángulo marrón con borde negro
+            pygame.draw.rect(pantalla, MARRON, (self.x, y, self.ancho, self.alto))
+            pygame.draw.rect(pantalla, NEGRO, (self.x, y, self.ancho, self.alto), 3)
+
+    def get_rect(self):
+        return pygame.Rect(self.x, self.y_suelo - self.alto, self.ancho, self.alto)
+    
+
+class Caja:
     def __init__(self, x, y_suelo):
         self.x = x
         self.y_suelo = y_suelo
